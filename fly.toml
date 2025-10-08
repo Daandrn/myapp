@@ -24,10 +24,11 @@ app = "myapp-lajpsg"
     restart_limit = 0
 
 # Volumes persistentes para Laravel
-[mounts]
+[[mounts]]
   source = "laravel-storage"
   destination = "/app/storage"
 
+[[mounts]]
   source = "laravel-cache"
   destination = "/app/bootstrap/cache"
 
