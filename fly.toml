@@ -1,0 +1,59 @@
+# fly.toml - Configuração completa para Laravel no Fly.io
+app = "myapp-lajpsg"
+
+# Build usando Dockerfile na raiz do projeto
+[build]
+  dockerfile = "Dockerfile"
+
+# Variáveis de ambiente do Laravel
+[env]
+  APP_ENV = "production"
+  APP_DEBUG = "false"
+  APP_KEY = "base64:COLOQUE_SUA_APP_KEY_AQUI"
+  APP_URL = "https://myapp-lajpsg.fly.dev"
+
+  DB_CONNECTION = "pgsql"
+  DB_HOST = "COLOQUE_SEU_HOST_AQUI"
+  DB_PORT = "5432"
+  DB_DATABASE = "COLOQUE_SEU_DB"
+  DB_USERNAME = "COLOQUE_SEU_USUARIO"
+  DB_PASSWORD = "COLOQUE_SUA_SENHA"
+
+# Configuração de serviços e portas
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  [[services.tcp_checks]]
+    interval = 10000
+    timeout = 2000
+    restart_limit = 0
+
+# Volumes persistentes para Laravel
+[mounts]
+  source = "laravel-storage"
+  destination = "/app/storage"
+
+  source = "laravel-cache"
+  destination = "/app/bootstrap/cache"
+
+# Configuração experimental
+[experimental]
+  auto_rollback = true
+
+# Comandos pós-deploy
+[deploy]
+  release_command = """
+    php artisan migrate --force &&
+    php artisan config:cache &&
+    php artisan route:cache &&
+    php artisan view:cache
+  """
